@@ -27,10 +27,11 @@ runs:
     - name: Build and push docker image
       uses: docker/build-push-action@v7
       with:
+        platforms: linux/amd64
         context: .
           # Using env.APP_NAME for the Dockerfile path
         file: infra/docker/${{ inputs.app-name }}.Dockerfile
-        push: ${{ inputs.branch == 'main' || inputs.branch == 'staging' }}
+        push: ${{ inputs.branch == 'main' }}
         tags: |
           ${{ inputs.branch == 'main' && format('{0}/nexussphere-{1}:latest', inputs.docker-username , inputs.app-name) || '' }}
           ${{ inputs.branch == 'main' && format('{0}/nexussphere-{1}:{2}', inputs.docker-username, inputs.app-name , inputs.build-hash) || '' }}

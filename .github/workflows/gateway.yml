@@ -2,7 +2,7 @@ name: Gateway CI pipeline
 
 on:
   push:
-    branches: ["main", "staging"]
+    branches: ["main"]
     paths:
       - '.github/actions/setup-java-env/action.yml'
       - '.github/actions/docker-build-push/action.yml'
@@ -11,7 +11,7 @@ on:
       - 'shared/common-java/**'
       - 'shared/proto-gen-java/**'
   pull_request:
-    branches: ["main", "staging"]
+    branches: ["main"]
     paths:
       - 'services/gateway/**'
       - 'shared/common-java/**'

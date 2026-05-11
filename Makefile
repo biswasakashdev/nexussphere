@@ -8,19 +8,19 @@ gen-code-java:
 # Configurations related to test workflows.
 act_cmd=act -P ubuntu-latest=catthehacker/ubuntu:act-latest --bind --env GITHUB_REF_NAME=dev --container-architecture linux/arm64 --secret-file .secrets -W
 
-users-action:
+users-workflow:
 	 $(act_cmd) .github/workflows/users.yml
 
-workspace-action:
+workspace-workflow:
 	 $(act_cmd) .github/workflows/workspaces.yml
 
-gateway-action:
+gateway-workflow:
 	 $(act_cmd) .github/workflows/gateway.yml
 
-access-manager-action:
+access-manager-workflow:
 	 $(act_cmd) .github/workflows/access-manager.yml
 
-web-action:
+web-workflow:
 	 $(act_cmd) .github/workflows/web.yml
 
 # Docker hub username

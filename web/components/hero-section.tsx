@@ -12,6 +12,20 @@ const OrbitalSphere = dynamic(
 );
 
 export function HeroSection() {
+  const chips: {
+    label: string;
+    delay: string;
+    top?: string;
+    bottom?: string;
+    left?: string;
+    right?: string;
+  }[] = [
+    { label: "Branches", top: "10%", left: "4%", delay: "0.8s" },
+    { label: "Analytics AI", top: "18%", right: "2%", delay: "1s" },
+    { label: "Inventory", bottom: "26%", left: "2%", delay: "0.9s" },
+    { label: "Sales CRM", bottom: "18%", right: "4%", delay: "1.1s" },
+    { label: "Warehouses", top: "50%", left: "0%", delay: "1.2s" },
+  ];
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
       {/* Subtle dot-grid background */}
@@ -114,20 +128,14 @@ export function HeroSection() {
             <OrbitalSphere />
 
             {/* Floating service chips */}
-            {[
-              { label: "Branches", top: "10%", left: "4%", delay: "0.8s" },
-              { label: "Analytics AI", top: "18%", right: "2%", delay: "1s" },
-              { label: "Inventory", bottom: "26%", left: "2%", delay: "0.9s" },
-              { label: "Sales CRM", bottom: "18%", right: "4%", delay: "1.1s" },
-              { label: "Warehouses", top: "50%", left: "0%", delay: "1.2s" },
-            ].map((chip) => (
+            {chips.map((chip) => (
               <div
                 key={chip.label}
                 className="absolute px-3 py-1.5 rounded-full border border-border bg-background/80 backdrop-blur-sm text-muted-foreground text-[11px] font-medium whitespace-nowrap animate-fade-in pointer-events-none shadow-sm"
                 style={{
                   top: chip.top,
-                  left: (chip as Record<string, string>).left,
-                  right: (chip as Record<string, string>).right,
+                  left: chip.left,
+                  right: chip.right,
                   bottom: chip.bottom,
                   animationDelay: chip.delay,
                 }}

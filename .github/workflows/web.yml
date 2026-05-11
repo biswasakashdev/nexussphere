@@ -2,14 +2,14 @@ name: Web CI pipeline
 
 on:
   push:
-    branches: ["main", "staging"]
+    branches: ["main"]
     paths:
       - '.github/actions/setup-java-env/action.yml'
       - '.github/actions/docker-build-push/action.yml'
       - '.github/workflows/users.yml'
       - 'web/**' # Note: Changed from workspace/** to users/** to match context
   pull_request:
-    branches: ["main", "staging"]
+    branches: ["main"]
     paths:
       - 'web/**'
   workflow_dispatch:
