@@ -24,12 +24,13 @@ public class PostgresWorkspaceRepositoryImpl implements WorkspaceRepository {
         String id = UUID.randomUUID().toString();
 
         return databaseClient
-                .sql("INSERT INTO workspaces(id, workspace_name, description, created_on) " +
-                        "VALUES (:id, :name, :description, :createdOn)")
+                .sql("INSERT INTO workspaces(id, workspace_name, description, owner_id, created_on) " +
+                        "VALUES (:id, :name, :description, :owner_id, :created_on)")
                 .bind("id", id)
                 .bind("name", workspaces.getName())
                 .bind("description", workspaces.getDescription())
-                .bind("createdOn", workspaces.getCreatedOn())
+                .bind("owner_id", workspaces.getOwnedBy())
+                .bind("created_on", workspaces.getCreatedOn())
                 .fetch()
                 .rowsUpdated()
                 .flatMap(rows -> {

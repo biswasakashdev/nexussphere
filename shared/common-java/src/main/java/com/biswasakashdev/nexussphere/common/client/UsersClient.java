@@ -1,6 +1,5 @@
 package com.biswasakashdev.nexussphere.common.client;
 
-import com.biswasakashdev.nexussphere.common.dtos.UserDetails;
 import com.biswasakashdev.nexussphere.protogen.users.v1.Types;
 import reactor.core.publisher.Mono;
 

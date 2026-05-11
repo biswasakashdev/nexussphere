@@ -1,10 +1,20 @@
 package com.biswasakashdev.nexussphere.workspace.dtos.response;
 
-import java.time.LocalDate;
+import lombok.Builder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Builder
 public record WorkspaceResponse(
+        String id,
         String name,
+        String description,
         String ownedBy,
-        LocalDate createdOn
+        Boolean isActive,
+        LocalDateTime lastActive,
+        LocalDate createdOn,
+        Long userCount,
+        Long groupCount
 ) {
 }

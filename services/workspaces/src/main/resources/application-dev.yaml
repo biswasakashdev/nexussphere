@@ -8,4 +8,5 @@ spring:
       schema-locations:
         - classpath:db/schema/schema.sql
 services:
+  users: localhost:15001
   accessManager: localhost:15003

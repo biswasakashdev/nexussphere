@@ -1,6 +1,6 @@
 package com.biswasakashdev.nexussphere.workspace.repository;
 
-import com.biswasakashdev.nexussphere.workspace.models.UserType;
+import com.biswasakashdev.nexussphere.common.dtos.Page;
 import com.biswasakashdev.nexussphere.workspace.models.UsersOnWorkspace;
 import com.biswasakashdev.nexussphere.workspace.models.Workspaces;
 import com.biswasakashdev.nexussphere.workspace.repository.impl.PostgresUsersOnWorkspaceRepositoryImpl;
@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Sort;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @Import(value = {
@@ -38,6 +38,9 @@ class UsersOnWorkspaceRepositoryTest extends AbstractRepositoryTest {
     private DatabaseClient databaseClient;
 
 
+    /**
+     * Loads the data from the data.sql file
+     */
     @BeforeEach
     void beforeEach() {
 
@@ -60,29 +63,35 @@ class UsersOnWorkspaceRepositoryTest extends AbstractRepositoryTest {
 
     }
 
-
+    /**
+     * Truncates all the tables in the database
+     */
     @AfterEach
     void afterEach() {
         databaseClient.sql("TRUNCATE TABLE " +
                         "users_on_workspaces, " +
+                        "users_on_groups, " +
                         "workspaces, " +
-                        "groups, " +
-                        "groups_on_workspaces, " +
-                        "users_on_groups RESTART IDENTITY CASCADE")
+                        "groups " +
+                        "RESTART IDENTITY CASCADE")
                 .fetch()
                 .rowsUpdated()
                 .block();
     }
 
+    /**
+     * Tests the save operation of the UsersOnWorkspaceRepository
+     */
     @Test
     void shouldSaveUsersOnWorkspace() {
+        String userId = "a-long-user-id";
+
         Workspaces workspaces = Workspaces.builder()
                 .name("Workspace 1")
                 .description("Description 1")
+                .ownedBy(userId)
                 .createdOn(LocalDate.now())
                 .build();
-
-        String userId = "a-long-user-id";
 
         workspaceRepository
                 .save(workspaces)
@@ -92,8 +101,8 @@ class UsersOnWorkspaceRepositoryTest extends AbstractRepositoryTest {
                                     .builder()
                                     .workspaceId(savedWorkspace.getId())
                                     .userId(userId)
-                                    .userType(UserType.ADMIN)
                                     .joinedOn(LocalDate.now())
+                                    .isActive(true)
                                     .build();
                     return usersOnWorkspaceRepository.save(usersOnWorkspace);
                 })
@@ -103,26 +112,45 @@ class UsersOnWorkspaceRepositoryTest extends AbstractRepositoryTest {
                 .verify();
     }
 
+    /**
+     * Tests the findAllWorkspacesByUserId operation of the UsersOnWorkspaceRepository
+     */
     @Test
-    void shouldReturnTheLastPageIfAskedForPageNumberGreaterThanTotalPages() {
+    void shouldFindAllTheWorkspacesUserMemberOf() {
+        Page.PageDetails pageDetails = new Page.PageDetails(
+                1,
+                10,
+                new HashMap<>()
+        );
         usersOnWorkspaceRepository
-                .findAllWorkspacesWithUserId("u1", 100, 10, Sort.Direction.ASC)
+                .findAllWorkspacesByUserId("u1", pageDetails)
                 .as(StepVerifier::create)
                 .consumeNextWith((page) -> {
-                    assertEquals(1, page.page());
-                    assertEquals(1, page.totalPages());
+                    Page.PageInfo pageInfo = page.getPageInfo();
+                    assertEquals(3, pageInfo.totalElements());
                 })
                 .expectComplete()
                 .verify();
 
     }
 
+    /**
+     * Tests the findAllUsersByWorkspaceId operation of the UsersOnWorkspaceRepository
+     */
+
     @Test
-    void shouldFindAllTheWorkspacesUserMemberOfWithOtherDetails() {
-        usersOnWorkspaceRepository.findAllWorkspacesWithUserId("u1", 1, 10, Sort.Direction.ASC)
+    void shouldFindAllTheUsersWithWorkspaceId() {
+        Page.PageDetails pageDetails = new Page.PageDetails(
+                1,
+                10,
+                new HashMap<>()
+        );
+        usersOnWorkspaceRepository
+                .findAllUsersByWorkspaceId("w1", pageDetails)
                 .as(StepVerifier::create)
                 .consumeNextWith((page) -> {
-                    assertEquals(3, page.totalItems());
+                    Page.PageInfo pageInfo = page.getPageInfo();
+                    assertEquals(3, pageInfo.totalElements());
                 })
                 .expectComplete()
                 .verify();

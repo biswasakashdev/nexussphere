@@ -1,19 +1,21 @@
 package com.biswasakashdev.nexussphere.workspace.controller;
 
+import com.biswasakashdev.nexussphere.common.dtos.Page;
 import com.biswasakashdev.nexussphere.common.response.PageResponse;
-import com.biswasakashdev.nexussphere.common.response.UserResponse;
 import com.biswasakashdev.nexussphere.workspace.dtos.requests.NewWorkspaceRequest;
 import com.biswasakashdev.nexussphere.workspace.dtos.response.IsNameExists;
+import com.biswasakashdev.nexussphere.workspace.dtos.response.UsersOnWorkspaceResponse;
 import com.biswasakashdev.nexussphere.workspace.dtos.response.WorkspaceResponse;
 import com.biswasakashdev.nexussphere.workspace.models.Workspaces;
 import com.biswasakashdev.nexussphere.workspace.services.WorkspaceService;
-import com.biswasakashdev.nexussphere.workspace.utils.WorkspacesUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,11 +53,17 @@ public class WorkspaceController {
             @RequestHeader("Authentication-Info") String userId,
             @RequestParam(name = "page", required = false, defaultValue = "20") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "20") Integer pageSize,
-            @RequestParam(name = "direction", required = false, defaultValue = "ASC") Sort.Direction direction
+            @RequestParam(name = "direction", required = false, defaultValue = "ASC") Page.Direction direction
     ) {
+        Map<String, Page.Direction> sort= new HashMap<>();
+
+        Page.PageDetails pageDetails= new Page.PageDetails(
+                page,
+                pageSize,
+                sort
+        );
         return workspaceService
-                .findAllWorkspace(userId, page, pageSize, direction)
-                .map(workspacesPageResponse -> PageResponse.pageResponse(workspacesPageResponse, WorkspacesUtils::buildWorkspaceResponse));
+                .findAllWorkspace(userId, pageDetails);
     }
 
     @GetMapping(value = "/exists")
@@ -70,16 +78,18 @@ public class WorkspaceController {
 
 
     @GetMapping(value = "/users")
-    public Mono<PageResponse<UserResponse>> getAllUserWithWorkspace(
+    public Mono<PageResponse<UsersOnWorkspaceResponse>> getAllUserWithWorkspace(
             @RequestHeader("Authentication-Info") String userId,
             @RequestParam(name = "workspaceId") String workspaceId,
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer size,
-            @RequestParam(name = "direction", required = false, defaultValue = "ASC") Sort.Direction direction
+            @RequestParam(name = "direction", required = false, defaultValue = "ASC") Page.Direction direction
     ) {
+
+        Map<String, Page.Direction> sort= new HashMap<>();
+        Page.PageDetails pageDetails= new Page.PageDetails(page, size, sort);
         return workspaceService
-                .findAllUsersInWorkspace(workspaceId, page, size, direction)
-                .map(userPageResponse -> PageResponse.pageResponse(userPageResponse, UserUtils::buildUserResponse));
+                .findAllUsersInWorkspace(workspaceId, pageDetails);
     }
 
 }

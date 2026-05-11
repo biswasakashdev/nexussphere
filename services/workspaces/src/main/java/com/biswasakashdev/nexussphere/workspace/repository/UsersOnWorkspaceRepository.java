@@ -1,18 +1,20 @@
 package com.biswasakashdev.nexussphere.workspace.repository;
 
-import com.biswasakashdev.nexussphere.common.response.PageResponse;
-import com.biswasakashdev.nexussphere.workspace.dtos.dao.UsersOnWorkspaceInfo;
+import com.biswasakashdev.nexussphere.common.dtos.Page;
+import com.biswasakashdev.nexussphere.workspace.dtos.dao.UsersOnWorkspaceDTO;
+import com.biswasakashdev.nexussphere.workspace.dtos.response.WorkspaceResponse;
 import com.biswasakashdev.nexussphere.workspace.models.UsersOnWorkspace;
-import com.biswasakashdev.nexussphere.workspace.models.Workspaces;
-import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
 
 public interface UsersOnWorkspaceRepository {
 
     Mono<UsersOnWorkspace> save(UsersOnWorkspace usersOnWorkspace);
 
-    Mono<PageResponse<UsersOnWorkspaceInfo>> findAllUsersInWorkspace(String workspaceId, Integer requiredPage, Integer pageSize, Sort.Direction direction);
+    Mono<Page<Map<String, UsersOnWorkspaceDTO>>> findAllUsersByWorkspaceId(String workspaceId, Page.PageDetails pageInfo);
 
-    Mono<PageResponse<Workspaces>> findAllWorkspacesWithUserId(String userId, Integer requiredPage, Integer pageSize, Sort.Direction direction);
+    Mono<Page<List<WorkspaceResponse>>> findAllWorkspacesByUserId(String userId, Page.PageDetails pageInfo);
 
 }

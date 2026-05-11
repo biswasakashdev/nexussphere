@@ -1,7 +1,6 @@
 package com.biswasakashdev.nexussphere.common.client.impl;
 
 import com.biswasakashdev.nexussphere.common.client.UsersClient;
-import com.biswasakashdev.nexussphere.common.dtos.UserDetails;
 import com.biswasakashdev.nexussphere.protogen.users.v1.GetUsersRequest;
 import com.biswasakashdev.nexussphere.protogen.users.v1.GetUsersResponse;
 import com.biswasakashdev.nexussphere.protogen.users.v1.ReactorUserGRPCServiceGrpc;

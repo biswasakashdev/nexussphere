@@ -1,7 +1,8 @@
 package com.biswasakashdev.nexussphere.common.response;
 
+import com.biswasakashdev.nexussphere.common.dtos.Page;
+
 import java.util.List;
-import java.util.function.Function;
 
 public record PageResponse<T>(
         int page,
@@ -11,14 +12,16 @@ public record PageResponse<T>(
         List<T> content
 ) {
 
-    public static<T,K> PageResponse<K> pageResponse(PageResponse<T> pageResponse, Function<T,K> mapper){
-        List<K> list= pageResponse.content.stream().map(mapper).toList();
+    public static <K> PageResponse<K> buildPageResponseFromPageDetails(
+            List<K> content,
+            Page.PageInfo pageInfo
+    ) {
         return new PageResponse<>(
-                pageResponse.page(),
-                pageResponse.pageSize(),
-                pageResponse.totalPages(),
-                pageResponse.totalItems(),
-                list
+                pageInfo.page(),
+                pageInfo.size(),
+                pageInfo.totalPages(),
+                pageInfo.totalElements(),
+                content
         );
     }
 }
